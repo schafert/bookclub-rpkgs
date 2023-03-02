@@ -3,7 +3,7 @@
 How to prepare and release a package to CRAN
 
 
-## preparing for submission 
+## Introduction - preparing for submission 
 
 To get your package ready to release, follow these steps:
 
@@ -19,12 +19,18 @@ To get your package ready to release, follow these steps:
 ## submission process & test environments
 
 - Don't do it manually - just use `devtools::release()`
-- Include a `cran-comments.md` file (`usethis::use_cran_comments()`) to describe the results from an R CMD CHECK and the systems that it was run on (those on your system, rhub or GitHub actions)
+- Include a `cran-comments.md` file tracked by git but ignored by `.Rbuildignore` (`usethis::use_cran_comments()`) to describe the results from an `R CMD CHECK` and the systems that it was run on (those on your system, `rhub` or GitHub actions)
+    + two main sections are **Check results** and **Downstream dependencies**
 
 
-CRAN runs on Windows, Mac OS X, Linux and Solaris. You don't need to test on all but you need to test on some and mention in the comments which you used. 
+## Test environments
 
-devtools::release() suggests that you test using rhub - I'm not sure what the difference is between this and the checks done by GitHub actions (if there is any)
+CRAN runs on Windows, Mac OS X, Linux and Solaris. You don't need to test on all but you need to test on some (at least two) and mention in the comments which you used. 
+
+Two ways to test on different platforms:
+
+1. manually with `rhub::check()` and 
+2. automatically with `usethis::use_github_action_check_standard()`
 
 If you have an OS-specific problem:
 
@@ -38,13 +44,11 @@ If you have an OS-specific problem:
 
 (3) send to CRAN and hope for the best
 
-
 ## check results
 
 - No `ERROR`s or `WARNING`s
 - avoid as many `NOTE`s as possible - if they can't be avoided, be open about it in the `cran-comments.md`
 - There will always be a `NOTE` for the first release of a package to CRAN, so it's worth mentioning this in the `cran-comments.md` if you're releasing your package for the first time as well.
-
 
 ## reverse dependencies
 
@@ -81,24 +85,25 @@ goodpractice::gp()
 
 ## release using `devtools::release()`
 
-- builds package and runs R CMD CHECK one last time
-- prompts the user to do final checks including spelling, checking on rhub, committing all changes etc
+- builds package and runs `R CMD CHECK` one last time
+- prompts the user to do final checks including spelling, checking on `rhub`, committing all changes etc (best practices)
+- allows you to add your own questions with `release_questions()`
 - uploads the package bundle to CRAN and includes `cran-comments.md`
 
 Afterwards, you'll get a confirmation email from CRAN (to the maintainers email). Once approved, the CRAN maintainer will run the checks and get back to you.
 
 
-## post-release
+## post-release 
 
 If you get rejected:
 
 - no need to respond to the email
 - fix problems identified and include a `## Resubmission` section at the top of `cran-comments.md` showing that it is a resubmission and listing the changes that you made since the previous, rejected submission.
 
-If you get accepted:
+If you get accepted, prepare for next version:
 
 - success!
-- when you did the submission, a `CRAN-SUBMISSION` or `CRAN-RELEASE` file was created. You don't need to commit this to GitHub. I usually just wait until it's accepted (hopefully) and when it is, run: `usethis::use_github_release()`. This creates a draft release on GitHub which you can then submit online.
+- when you did the submission, a `CRAN-SUBMISSION` or `CRAN-RELEASE` file was created. You don't need to commit this to GitHub. When it is accepted, run: `usethis::use_github_release()`. This creates a draft release on GitHub which you can then submit online.
 - add the `.9000` suffix to the version on GitHub to indicate that it's the development version
 
 ## publicising it
